@@ -1,0 +1,160 @@
+---
+output:
+  revealjs::revealjs_presentation:
+    theme: night
+    highlight: pygments
+    transition: fade
+    controlsTutorial: true
+    center: true
+    smart: true
+    incremental: true
+    self_contained: false
+    preloadIframes: true
+    autoAnimate: true
+    mouseWheel: true
+    previewLinks: true
+    hideInactiveCursor: true
+    fig_width: 8
+    fig_height: 6
+    lib_dir: "libs"  
+    reveal_plugins: ["notes", "search", "chalkboard", "zoom", "menu"]
+    reveal_options:
+      slideNumber: true
+      previewLinks: false
+---
+
+# National Pollution Inventory<br> Tushar Babu<br> u3225862 {#sec-NPI data-background="images/pollution_bg1.jpg" style="background-color: rgba(0, 0, 0, 0.4); color: #fff; padding: 10px;"}
+
+# Motivation {#sec-motivation style="text-align: left;"}
+
+We have been encountering a series of climate-change incidents in the recent years.
+
+-   Australian government has declared la-Nina event for the third consecutive year <http://www.bom.gov.au/climate/enso/#tabs=Overview>.
+
+-   We could also find reports of higher concentration of pollutants which were found to significantly influence weather parameters <http://www.bom.gov.au/state-of-the-climate/>.
+
+-   While this may be the case with air, we also have significant presence of pollutants in sea <https://www.csiro.au/en/research/natural-environment/oceans/marine-debris>.
+
+# Data Source {#sec-datasource style="text-align: left;"}
+
+Australian government releases data once every year(31^st^ March) reporting on the incidents of pollutant related details from across the country. An encouraging step, which could be used for extracting insightful information and trends over varying time periods. An action plan with significant impact can be created accordingly.
+
+```{r load, file=c('code/packages.R','code/loadata.R','code/datamodel.R'), message=FALSE, warning=FALSE, include=FALSE}
+```
+
+## How does the data fare? {#dataset style="text-align:left"}
+
+We have pollutant data with respect to the following,
+
+-   Substances
+-   Facilities
+-   Transfers
+-   Emissions
+
+## A look at the Data Model {#datamodel style="text-align:left"}
+
+```{=html}
+<style>
+  .p_iframe iframe {
+    width:100%;
+    height:800px;
+}
+</style>
+```
+::: p_iframe
+<iframe frameborder="0" seamless="seamless" scrolling="no" src="images/dm_graph.svg">
+
+</iframe>
+:::
+
+## Substances {#substances style="text-align:left"}
+
+```{r substances, file='code/substances.R', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+
+```
+
+`r disp_subs`
+
+Further information on substances can be found at, <https://www.dcceew.gov.au/environment/protection/npi/substances/substance-list-and-thresholds>
+
+## Substances(insights) {#analyse-sub style="text-align:left"}
+
+Australian Government tracks **`r nrow(substances)`** substances. These are reported by organisations in Australia from 2007-08 onwards.
+
+Of the `r nrow(substances)` there are,
+
+-   **`r nrow(substances[substances$voc,])`** substances which could contribute to photochemical formation of Ozone.
+
+-   **`r nrow(substances[substances$emissions_to_air,])`** substances can pollute air.
+
+-   **`r nrow(substances[substances$emissions_to_water,])`** substances can pollute water.
+
+-   **`r nrow(substances[substances$emissions_to_land,])`** substances can pollute land.
+
+## Facilities(insights) {#facilities style="text-align:left"}
+
+```{r facilities, file='code/facilities.R', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+
+```
+
+`r disp_facs`
+
+-   Maximum number of facilities **`r state_max$count`** are in the state **`r state_max$state`**.
+-   Least number of facilities **`r state_min$count`** are in the state of **`r state_min$state`**.
+-   Suburb **`r suburb_max$suburb`** from the state **`r suburb_max$state`** has most number of facilities **`r  suburb_max$count`**.
+-   **`r class_max$count`** facilities calssified under **`r class_max$primary_anzsic_class_name`** are most common in Australia.
+-   As expected, most common activity is **`r act_max$main_activities`** with **`r act_max$count`** in the country.
+
+## Mapping Facilities {#map_facilities style="text-align:left"}
+
+`r facs_map`
+
+## Transfer Destinations {#tansfer-dest style="text-align:left"}
+
+```{r transfer_dest, file='code/transfer_dest.R', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+
+```
+
+-   A set of classifying destination to which substance are to be tansferred.
+-   There are **`r xfr_dest_count`** classifications.
+-   **`r xfr_dest_mandatory_count`** of these classifications need mandatory reporting of the end destination.
+-   **`r xfr_dest_off`** destinations are classified Off-Site which would mean away from the site where the substance was created.
+
+## Transfers {#tansfers style="text-align:left"}
+
+```{r transfers, file='code/transfers.R', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+
+```
+
+`r fig`
+
+## Emissions {#emissions style="text-align:left"}
+
+```{r emissions, file='code/emissions.R', echo=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+
+```
+
+`r glb`
+
+## Emissions(insights) {#analyse-em style="text-align:left"}
+
+`r em_lf`
+
+Emission has been reported from `r min(em$em_yr)` to `r max(em$em_yr)`. Maximum emission was reported in the year **`r tot_em[tot_em$total == max(tot_em$total),]$em_yr`** at **`r max(tot_em$total)`**. Facillity **`r tot_fac[tot_fac$total == max(tot_fac$total),]$em_fac`** has reported highest amount of emissions.
+
+# Conclusion {#conclude style="text-align:left"}
+
+-   We could see significant amount of pollutants across Australia.
+-   Barring ACT, not many states have been successful in curbing emissions.
+-   Actions need to be taken for preventing further degradation.
+-   While we find issues with pollutants, we should acknowledge that most of it is for power generation or are petroleum related.
+-   We should find the right balance and alternatives for reducing these necessities.
+
+```{=html}
+<script>
+  widg = document.getElementsByClassName('html-widget'); //find widgets
+  for (let i = 0; i < widg.length; i++) { //loop through
+    document.getElementsByClassName('leaflet')[i].style.width = '100%'; //adjust width
+  }
+</script>
+```
